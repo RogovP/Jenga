@@ -9,6 +9,33 @@ var (
 	destroyer_lvl int
 )
 
+func GetListGamers(db sql.DB) []string {
+
+	rows, err := db.Query("SELECT name FROM gamers")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+	gamers := []string{}
+	var name string
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		gamers = append(gamers, name)
+	}
+	return gamers
+}
+
+func UpdateChatId(db *sql.DB){
+	_, err := db.Query("DELETE * FROM gamers")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func SaveDestroyer(db *sql.DB, name string){
 	row, err := db.Query("SELECT destroyer_lvl FROM gamers WHERE name=$1",name)
 	if err != nil {
